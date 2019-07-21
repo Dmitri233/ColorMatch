@@ -50,7 +50,7 @@ commands:
     start: "&7use &e/cm start &a<arena name>"
     stop: "&7use &e/cm stop &a<arena name>"
     set: "&7use &e/cm configure &a<arena name>"
-    create: "&7u0se &e/cm create &a<arena name>"
+    create: "&7use &e/cm create &a<arena name>"
     setlobby_player: "&7use &e/cm setlobby"
     setlobby: "&7use &e/cm setlobby &a<x> <y> <z> [world]"
     build: "&7use &e/cm build &a<arena name> [block]"
