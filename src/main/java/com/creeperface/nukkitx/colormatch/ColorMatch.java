@@ -25,13 +25,15 @@ import com.creeperface.nukkitx.colormatch.utils.Utils;
 import lombok.Getter;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ColorMatch extends PluginBase {
+
+    @Getter
+    public static final String prefix = TextFormat.BLUE + "[" + TextFormat.RED + "CM" + TextFormat.BLUE + "] ";
 
     public MainConfiguration conf;
 
@@ -65,9 +67,6 @@ public class ColorMatch extends PluginBase {
     public void onEnable() {
         new File(this.getDataFolder(), "arenas").mkdirs();
         boolean first = saveResource("config.yml");
-        saveResource("lang/English.yml");
-        saveResource("lang/Czech.yml");
-        saveResource("lang/Chinese.yml");
 
         this.conf = new MainConfiguration(this);
         if (!this.conf.load(first)) {
@@ -100,10 +99,6 @@ public class ColorMatch extends PluginBase {
         stats.onDisable();
     }
 
-    public static String getPrefix() {
-        return "§9[§cCM§9] ";
-    }
-
     public boolean registerArena(String name, File file) {
         Arena arena = new Arena(this, name, file);
         arenas.put(name, arena);
@@ -119,12 +114,8 @@ public class ColorMatch extends PluginBase {
             return;
         }
 
-        File[] files = arenas.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.lastIndexOf('.') > 0 && name.substring(name.lastIndexOf('.')).equals(".yml");
-            }
-        });
+        File[] files = arenas.listFiles((dir, name) ->
+                name.lastIndexOf('.') > 0 && name.substring(name.lastIndexOf('.')).equals(".yml"));
 
         if (files == null || files.length == 0) {
             getServer().getLogger().info(getLanguage().translateString("general.no_arenas"));
@@ -157,8 +148,8 @@ public class ColorMatch extends PluginBase {
 
             Arena arena = args.length >= 2 ? arenas.get(args[1].toLowerCase()) : null;
 
-            if (!sender.hasPermission("cm.command." + args[0].toLowerCase())) {
-                sender.sendMessage(cmd.getPermissionMessage());
+            if (!sender.hasPermission("colormatch.command." + args[0].toLowerCase())) {
+                sender.sendMessage(getLanguage().translateString("general.permission_message"));
                 return true;
             }
 
@@ -551,12 +542,17 @@ public class ColorMatch extends PluginBase {
     }
 
     private void initLanguage() {
+        saveResource("lang/English.yml");
+        saveResource("lang/Czech.yml");
+        saveResource("lang/Chinese.yml");
+        saveResource("lang/Korean.yml");
+        saveResource("lang/German.yml");
+
         File languages = new File(getDataFolder(), "lang");
         String lang = conf.getLanguage();
 
         if (!languages.exists() || !languages.isDirectory()) {
             getLogger().error("Could not load default language");
-            return;
         } else {
             File[] files = languages.listFiles((dir, name) -> name.endsWith(".yml"));
 
